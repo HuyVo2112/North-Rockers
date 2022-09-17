@@ -1,5 +1,3 @@
-import { client } from './db/client'
-
 const express = require('express')
 const app = express()
 const port = 3000
