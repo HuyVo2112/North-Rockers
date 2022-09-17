@@ -11,7 +11,6 @@ app.get('/', async (req, res) => {
   //const res = await axios.get('https://httpbin.org/get', { params: { answer: 42 } }); 
   const re = (await axios.get('https://reddit.com/r/funnyvideos.json', { params: { answer: 42 } })).data; 
   //console.log(re); 
-  console.log(re["data"]["after"]);  
 
   try {
     const results = await client.query("SELECT * FROM users");
@@ -19,18 +18,28 @@ app.get('/', async (req, res) => {
     //return res.status(200).send(re);
 
     for (let child of re["data"]["children"]) {
-  
-
+      
       (async () => {
         try {
     
-          const results = await client.query("INSERT INTO videos VALUES ($1, $2)", [child.url, parseInt(child.data.score, 10)/20]); 
+          const results = await client.query("INSERT INTO videos VALUES ($1, $2)", [child.data.url, parseInt(parseInt(child.data.score, 10)/20)]); 
           //console.log(results);
         } catch (err) {
-          //console.error("error executing query:", err);
+          console.error("error executing query:", err);
         }
       })();
     }
+
+    (async () => {
+      try {
+        const results = await client.query("SELECT * FROM videos");
+        console.log(results);
+      } catch (err) {
+        console.error("error executing query:", err);
+      } finally {
+        client.end();
+      }
+    })();
 
     return res.status(200).send(re); 
   } catch (error) {
