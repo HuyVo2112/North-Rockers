@@ -7,7 +7,6 @@ command = command.replace(/\r\n/g, "");
 console.log(command);
 
 (async () => {
-    client.connect();
     try {
       const results = await client.query(command);
       console.log(results);
