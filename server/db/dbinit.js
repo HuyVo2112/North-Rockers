@@ -1,5 +1,19 @@
-const { client } = require()
+const client = require('./client')
 const fs = require('fs');
 
-const command = fs.readFileSync('./dbinit.sql');
+let command = fs.readFileSync(__dirname + '/dbinit.sql',  {encoding:'utf8', flag:'r'});
+
+command = command.replace(/\r\n/g, "");
 console.log(command);
+
+(async () => {
+    client.connect();
+    try {
+      const results = await client.query(command);
+      console.log(results);
+    } catch (err) {
+      console.error("error executing query:", err);
+    } finally {
+      client.end();
+    }
+  })();
