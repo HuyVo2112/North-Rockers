@@ -1,4 +1,4 @@
-
+DROP TABLE users;
 CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(250) UNIQUE NOT NULL,
     password VARCHAR(250) NOT NULL,
@@ -6,12 +6,14 @@ CREATE TABLE IF NOT EXISTS users (
     PRIMARY KEY (username)
 );
 
+DROP TABLE videos;
 CREATE TABLE IF NOT EXISTS videos (
     video_id VARCHAR(250) UNIQUE NOT NULL,
-    views INT,
+    likes INT,
     PRIMARY KEY (video_id)
 );
 
+DROP TABLE laughs;
 CREATE TABLE IF NOT EXISTS laughs (
     username VARCHAR(250) UNIQUE NOT NULL,
     video_id VARCHAR(250) UNIQUE NOT NULL,
@@ -20,6 +22,7 @@ CREATE TABLE IF NOT EXISTS laughs (
     PRIMARY KEY(video_id, username)
 );
 
+DROP TABLE followings;
 CREATE TABLE IF NOT EXISTS followings (
     username VARCHAR(250) UNIQUE NOT NULL,
     following_username VARCHAR(250) UNIQUE NOT NULL,
