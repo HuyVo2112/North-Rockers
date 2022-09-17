@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 
 CREATE TABLE IF NOT EXISTS videos (
     video_id VARCHAR(250) UNIQUE NOT NULL,
-    views INT,
+    likes INT, 
     PRIMARY KEY (video_id)
 );
 
