@@ -21,7 +21,7 @@ app.post('/signup', async (req, res) => {
   const password = await bcrypt.hash(body.password, salt);
 
   try {
-    const results = await client.query("INSERT INTO users VALUES ($1, $2, 0)", [body.username, password]);
+    const results = await client.query("INSERT INTO users VALUES ($1, $2)", [body.username, password]);
   } catch (error) {
     return res.status(500).send("Duplicate user!");
   }
@@ -53,51 +53,41 @@ app.post('/login', async (req, res) => {
 })
 
 app.get("/streaks", async(req, res) => {
-  /* try {
-    const results = await client.query("SELECT * FROM laughs WHERE username = $1", [getCookie("username")])
-    console.log(results); 
-    res.send("Hello World!"); 
-  } catch (error) {
-    console.error("error executing query:", err);
-  } finally {
-    client.end(); 
-  }*/
-
-  const re = (await axios.get('https://reddit.com/r/funnyvideos.json', { params: { answer: 42 } })).data; 
+  const re = (await axios.get('https://reddit.com/r/funnyvideos.json?limit=1000', { params: { answer: 42 } })).data; 
   //console.log(re); 
 
   try {
     //const results = await client.query("SELECT * FROM users");
 
     for (let child of re["data"]["children"]) {
-      (async () => {
-        try {
-          const results = await client.query("INSERT INTO videos VALUES ($1, $2)", [child.data.url, parseInt(parseInt(child.data.score, 10)/20)]); 
-          //console.log(results);
-        } catch (err) {
-          console.error("error executing query:", err); 
-        }
-      })();
+      try {
+        const results = await client.query("INSERT INTO videos VALUES ($1, $2)", [child.data.url, parseInt(parseInt(child.data.score, 10)/20)]); 
+        //console.log(results);
+      } catch (err) {
+        console.error("error executing query:", err); 
+      }
     }
-
     //return res.status(200).send(re); 
   } catch (error) {
     console.log(error);
     return res.sendStatus(500);
   }
 
-  (async () => {
-    try {
-      const results = await client.query("SELECT * FROM videos");
-      console.log(results);
-    } catch (err) {
-      console.error("error executing query:", err);
-    }
-  })();
+  let results; 
+
+  try {
+    results = await client.query("SELECT * FROM videos");
+    console.log(results);
+  } catch (err) {
+    console.error("error executing query:", err);
+  }
 
   //SORT VIDEOS BY MOST LIKED + RANDOMNESS
+
+  console.log(typeof(results)); 
+  let results2 = results.rows.sort((a,b) => parseInt(b.likes) - parseInt(a.likes)); 
   
-  return results; 
+  return res.send(results2); 
 })
 
 app.get("/score", async (req, res) => {
@@ -113,15 +103,20 @@ app.get("/score", async (req, res) => {
   })();
 })
 
+app.post("/follow", async (req, res) => {
+  const body = req.body; 
+
+  try {
+    const results = await client.query("INSERT INTO followings VALUES ($1, $2, 0)", [body.username, body.following_username]); 
+  } catch (error) {
+    return res.status(500).send("Duplicate user!"); 
+  }
+
+  return res.sendStatus(204); 
+})
+
 app.get("/", async (req, res) => {
-  (async () => {
-    try {
-      const results = await client.query("SELECT * FROM videos");
-      console.log(results);
-    } catch (err) {
-      console.error("error executing query:", err);
-    }
-  })();
+  return res.send("Hello World!"); 
 })
 
 app.listen(port, () => {
