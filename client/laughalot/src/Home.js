@@ -118,7 +118,7 @@ function Home() {
         </div>
         <div  className="app">
       <div className='app__video'>
-        <video crossOrigin='anonymous' ref={videoRef} autoPlay ></video>
+        <video id="camera" crossOrigin='anonymous' ref={videoRef} autoPlay ></video>
       </div>
         <canvas ref={canvasRef} width="300" height="200" className='app__canvas' />
       
