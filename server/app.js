@@ -6,11 +6,11 @@ const port = 3000
 const client = require("./db/client");
 const bodyParser = require('body-parser');
 const bcrypt = require('bcrypt'); 
+const cors = require('cors')
 
 app.use(bodyParser.json());
+app.use(cors())
 
-<<<<<<< HEAD
-=======
 app.get('/', async (req, res) => {
   //res.send('Hello World!')
 
@@ -54,7 +54,6 @@ app.get('/', async (req, res) => {
   }
 })
 
->>>>>>> main
 app.post('/signup', async (req, res) => {
   const body = req.body;
   if (!(body.username && body.password)) {
@@ -67,8 +66,9 @@ app.post('/signup', async (req, res) => {
   const password = await bcrypt.hash(body.password, salt);
 
   try {
-    const results = await client.query("INSERT INTO users VALUES ($1, $2)", [body.username, password]);
+    const results = await client.query("INSERT INTO users VALUES ($1, $2, $3)", [body.username, password, 0]);
   } catch (error) {
+    console.log(error);
     return res.status(500).send("Duplicate user!");
   }
 
@@ -97,7 +97,6 @@ app.post('/login', async (req, res) => {
   }
 })
 
-<<<<<<< HEAD
 app.get("/streaks", async(req, res) => {
   const re = (await axios.get('https://reddit.com/r/funnyvideos.json?limit=1000', { params: { answer: 42 } })).data; 
   //console.log(re); 
@@ -137,6 +136,7 @@ app.get("/streaks", async(req, res) => {
 })
 
 app.get("/score", async (req, res) => {
+  const body = req.body;
   (async () => {
     try {
       const results = await client.query("SELECT * FROM followings WHERE username = $1", [body.username]); 
@@ -161,14 +161,11 @@ app.post("/follow", async (req, res) => {
   return res.sendStatus(204); 
 })
 
-app.get("/", async (req, res) => {
-  return res.send("Hello World!"); 
-=======
 app.post('/increment-streak', async (req, res) => {
   const {username} = req.body;
 
   try {
-    const results  = await client.query("SELECT * FROM users WHERE username = $1", [body.username]);
+    const results  = await client.query("SELECT * FROM users WHERE username = $1", [username]);
     if (results.rows.length == 0) {
       return res.status(404).send({error: "Username not found "});
     }
@@ -183,7 +180,7 @@ app.post('/start-streak', async (req, res) => {
   const {username} = req.body;
 
   try {
-    const results  = await client.query("SELECT * FROM users WHERE username = $1", [body.username]);
+    const results  = await client.query("SELECT * FROM users WHERE username = $1", [username]);
     if (results.rows.length == 0) {
       return res.status(404).send({error: "Username not found "});
     }
@@ -192,13 +189,30 @@ app.post('/start-streak', async (req, res) => {
   } catch (error) {
     return res.status(500).send("Database error");
   }
->>>>>>> main
+})
+
+app.get('/user', async (req, res) => {
+  const {username} = req.query;
+
+  try {
+    const results  = await client.query("SELECT * FROM users");
+    const users = [];
+
+    for (const record of results.rows) {
+      if (record.username.includes(username)) {
+        users.push(record);
+      }
+    }
+    return res.status(200).send(users);
+  } catch (error) {
+    console.log(error);
+    return res.status(500).send("Database error");
+  }
 })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
-<<<<<<< HEAD
 
 /*
 
@@ -242,5 +256,3 @@ function getCookie(cname) {
 }
 
 */
-=======
->>>>>>> main

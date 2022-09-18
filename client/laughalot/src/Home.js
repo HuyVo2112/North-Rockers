@@ -4,11 +4,23 @@ import './index.css';
 import {Navigate} from "react-router-dom";
 import * as faceapi from "face-api.js";
 import { useRef, useEffect } from 'react';
+import axios from 'axios'
 
 function Home() {
 
   const videoRef = useRef();
   const canvasRef = useRef();
+
+  const searchName = async (e) => {
+    e.preventDefault();
+    const username = document.getElementById("paddingBottomInput").value;
+    try {
+      const users = await axios.get('http://localhost:3000/user?username='+username);
+      console.log(users);
+    } catch (error) {
+      console.log(error);
+    }
+  }
 
   useEffect(() => {
     startVideo();
@@ -111,7 +123,7 @@ function Home() {
               <h2>ADD FRIEND</h2>
               <form class="form-inline">
                 <input id="paddingBottomInput" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+                <button onClick={searchName} class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
               </form>
             </div>
           </div> 
