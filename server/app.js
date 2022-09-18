@@ -53,11 +53,38 @@ app.post('/login', async (req, res) => {
     
     return res.status(200).send(await bcrypt.compare(body.password, password));
   } catch (error) {
-    console.log(error);
     return res.status(500).send("Database error");
   }
-  
-  
+})
+
+app.post('/increment-streak', async (req, res) => {
+  const {username} = req.body;
+
+  try {
+    const results  = await client.query("SELECT * FROM users WHERE username = $1", [body.username]);
+    if (results.rows.length == 0) {
+      return res.status(404).send({error: "Username not found "});
+    }
+    await client.query("UPDATE users SET max_streak = $1 WHERE username = $2", [results.rows[0]['max_streak'] + 1, username]);
+    return res.sendStatus(200);
+  } catch (error) {
+    return res.status(500).send("Database error");
+  }
+})
+
+app.post('/start-streak', async (req, res) => {
+  const {username} = req.body;
+
+  try {
+    const results  = await client.query("SELECT * FROM users WHERE username = $1", [body.username]);
+    if (results.rows.length == 0) {
+      return res.status(404).send({error: "Username not found "});
+    }
+    await client.query("UPDATE users SET max_streak = $1 WHERE username = $2", [0, username]);
+    return res.sendStatus(200);
+  } catch (error) {
+    return res.status(500).send("Database error");
+  }
 })
 
 app.listen(port, () => {

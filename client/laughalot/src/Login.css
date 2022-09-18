@@ -49,9 +49,10 @@
   .colorClass {
     background-color: #FA7C7C;
     color: white;
-    height: 100vh;
+    height: auto;
+    margin-bottom: 30px;
     font-family: 'Acme', sans-serif;}
   
   .bigPadding{
-    padding-top: 300px;
+    padding-top: 100px;
   }

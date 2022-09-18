@@ -2,14 +2,63 @@ import logo from './logo.svg';
 import './Home.css';
 import './index.css';
 import {Navigate} from "react-router-dom";
+import * as faceapi from "face-api.js";
+import { useRef, useEffect } from 'react';
 
 function Home() {
 
-  // let isLoggedIn = false;
+  const videoRef = useRef();
+  const canvasRef = useRef();
 
-  // if (!isLoggedIn) {
-  //   return <Navigate to='/login'></Navigate>
-  // }
+  useEffect(() => {
+    startVideo();
+
+    videoRef && loadModels();
+
+  }, []);
+  
+    const loadModels = () => {
+      Promise.all([
+        faceapi.nets.tinyFaceDetector.loadFromUri('/models'),
+        faceapi.nets.faceLandmark68Net.loadFromUri('/models'),
+        faceapi.nets.faceRecognitionNet.loadFromUri('/models'),
+        faceapi.nets.faceExpressionNet.loadFromUri('/models'),
+      ]).then(() => {
+        faceDetection();
+      })
+    };
+
+  const startVideo = () => {
+    navigator.mediaDevices.getUserMedia({ video: true })
+      .then((currentStream) => {
+        videoRef.current.srcObject = currentStream;
+      })
+      .catch((err) => {
+        console.error(err)
+      });
+  }
+  
+  const faceDetection = async () => {
+    setInterval(async() => {
+      
+      const detections = await faceapi.detectAllFaces(videoRef.current, new faceapi.TinyFaceDetectorOptions()).withFaceLandmarks().withFaceExpressions();
+      
+      canvasRef.current.innerHtml = faceapi.createCanvasFromMedia(videoRef.current);
+      faceapi.matchDimensions(canvasRef.current, {
+        width: 940,
+        height: 650,
+      })
+
+      const resized = faceapi.resizeResults(detections, {
+        width: 940,
+        height: 650,
+      });
+      console.log(resized[0].expressions.happy);
+
+      faceapi.draw.drawFaceExpressions(canvasRef.current, resized);
+
+    }, 1000)
+  }
   return (
     <html>
       <link rel="stylesheet" href='Home.css'></link>
@@ -42,8 +91,7 @@ function Home() {
         </header>
         <body class='colorClass'>
                 
-         
-          
+  
         <div class="container h-100 colorClass">
           <div class="row bigPadding">
             <div class="col-sm">
@@ -62,12 +110,19 @@ function Home() {
             <div class="col-sm">
               <h2>ADD FRIEND</h2>
               <form class="form-inline">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
+                <input id="paddingBottomInput" class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search"/>
                 <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
               </form>
             </div>
-          </div>
+          </div> 
         </div>
+        <div  className="app">
+      <div className='app__video'>
+        <video crossOrigin='anonymous' ref={videoRef} autoPlay ></video>
+      </div>
+        <canvas ref={canvasRef} width="300" height="200" className='app__canvas' />
+      
+    </div>
         </body>
       </div>
     </html>
