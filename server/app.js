@@ -116,8 +116,42 @@ app.get("/streaks", async(req, res) => {
 
   //SORT VIDEOS BY MOST LIKED + RANDOMNESS
 
+  var results2 = [[]]; 
+
+  try {
+    const _results = await client.query("SELECT * FROM laughs WHERE username = $1", [body.username]); 
+  } catch (err) {
+    console.error("error executing query:", err); 
+  }
+
+  for (var i = 0; i < results.rows.length; ++i) {
+    var weight = 0; 
+    results2[i] = [0, results.rows[i].video_id, results.rows[i].likes, results.rows[i].words]; 
+
+    for (var j = 0; j < _results.length; ++j) {
+      const videoResult = await client.query("SELECT * FROM videos WHERE video_id = $1", [_results[j].video_id]); 
+      var s = ''; 
+      for (var k = 0; k < videoResult.words.length; ++k) {
+        if (videoResult.words[k] == ' ') {
+          if (results.rows[i].words.indexOf(s)) {
+            //INCREASE RECOMMENDATION
+            //client.query("UPDATE videos SET likes = $1 WHERE video_id = $2", [_results[j].likes + 20, _results[j].video_id]);
+            ++weight; 
+          }
+        } else if (videoResult.words[k] != ',') {
+          s += videoResult.words[k]; 
+        }
+
+        s += videoResult
+      }
+    }
+
+    results2[i][0] = results2[i][2]+weight*2; 
+  }
+
   console.log(typeof(results)); 
-  let results2 = results.rows.sort((a,b) => parseInt(b.likes) - parseInt(a.likes)); 
+  //let results2 = results.rows.sort((a,b) => parseInt(b.likes) - parseInt(a.likes)); 
+  results2 = results2.sort(); 
   
   return res.send(results2); 
 })
@@ -126,7 +160,7 @@ app.get("/score", async (req, res) => {
   (async () => {
     try {
       const results = await client.query("SELECT * FROM followings WHERE username = $1", [body.username]); 
-      console.log(results);
+      //console.log(results);
     } catch (err) {
       console.error("error executing query:", err); 
     }
