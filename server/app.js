@@ -9,6 +9,52 @@ const bcrypt = require('bcrypt');
 
 app.use(bodyParser.json());
 
+<<<<<<< HEAD
+=======
+app.get('/', async (req, res) => {
+  //res.send('Hello World!')
+
+  //const res = await axios.get('https://httpbin.org/get', { params: { answer: 42 } }); 
+  const re = (await axios.get('https://reddit.com/r/funnyvideos.json', { params: { answer: 42 } })).data; 
+  //console.log(re); 
+
+  try {
+    const results = await client.query("SELECT * FROM users");
+    //const results = await client.query("INSERT INTO users VALUES ('arihan', 'password', '10')"); 
+    //return res.status(200).send(re);
+
+    for (let child of re["data"]["children"]) {
+      
+      (async () => {
+        try {
+    
+          const results = await client.query("INSERT INTO videos VALUES ($1, $2)", [child.data.url, parseInt(parseInt(child.data.score, 10)/20)]); 
+          //console.log(results);
+        } catch (err) {
+          console.error("error executing query:", err);
+        }
+      })();
+    }
+
+    (async () => {
+      try {
+        const results = await client.query("SELECT * FROM videos");
+        console.log(results);
+      } catch (err) {
+        console.error("error executing query:", err);
+      } finally {
+        client.end();
+      }
+    })();
+
+    return res.status(200).send(re); 
+  } catch (error) {
+    console.log(error);
+    return res.sendStatus(500);
+  }
+})
+
+>>>>>>> main
 app.post('/signup', async (req, res) => {
   const body = req.body;
   if (!(body.username && body.password)) {
@@ -47,11 +93,11 @@ app.post('/login', async (req, res) => {
       setCookie("username", body.username); 
     }
   } catch (error) {
-    console.log(error);
     return res.status(500).send("Database error");
   }
 })
 
+<<<<<<< HEAD
 app.get("/streaks", async(req, res) => {
   const re = (await axios.get('https://reddit.com/r/funnyvideos.json?limit=1000', { params: { answer: 42 } })).data; 
   //console.log(re); 
@@ -117,11 +163,42 @@ app.post("/follow", async (req, res) => {
 
 app.get("/", async (req, res) => {
   return res.send("Hello World!"); 
+=======
+app.post('/increment-streak', async (req, res) => {
+  const {username} = req.body;
+
+  try {
+    const results  = await client.query("SELECT * FROM users WHERE username = $1", [body.username]);
+    if (results.rows.length == 0) {
+      return res.status(404).send({error: "Username not found "});
+    }
+    await client.query("UPDATE users SET max_streak = $1 WHERE username = $2", [results.rows[0]['max_streak'] + 1, username]);
+    return res.sendStatus(200);
+  } catch (error) {
+    return res.status(500).send("Database error");
+  }
+})
+
+app.post('/start-streak', async (req, res) => {
+  const {username} = req.body;
+
+  try {
+    const results  = await client.query("SELECT * FROM users WHERE username = $1", [body.username]);
+    if (results.rows.length == 0) {
+      return res.status(404).send({error: "Username not found "});
+    }
+    await client.query("UPDATE users SET max_streak = $1 WHERE username = $2", [0, username]);
+    return res.sendStatus(200);
+  } catch (error) {
+    return res.status(500).send("Database error");
+  }
+>>>>>>> main
 })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
+<<<<<<< HEAD
 
 /*
 
@@ -165,3 +242,5 @@ function getCookie(cname) {
 }
 
 */
+=======
+>>>>>>> main
