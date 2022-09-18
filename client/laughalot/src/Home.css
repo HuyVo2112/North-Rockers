@@ -21,7 +21,7 @@
   align-items: center;
   justify-content: center;
   font-size: calc(10px + 2vmin);
-  color: #E05151;
+  color: #000000;
 }
 
 .Home-link {
@@ -47,11 +47,8 @@ body {
 }
 
 .colorClass {
-  background-color: #FA7C7C;
+  background-color: #000000;
   color: white;
   height: 100vh;
   font-family: 'Acme', sans-serif;}
 
-.bigPadding{
-  padding-top: 300px;
-}

@@ -8,11 +8,11 @@ function Signup() {
       <link rel="stylesheet" href='Signup.css'></link>
       <link rel="stylesheet" href='index.css'></link>
       <div className="Signup">
-        <body class='colorClass pb-5'>
+        <body class='bg-dark pb-5'>
         <div class="comtainer py-5"></div>
         <div class="container h-100 align-middle opactiy-75 pb-5">
-            <div class ='col-md-4 offset-md-4 p-4 opactiy-75 rounded bg-light text-dark'>
-                <h1>Laughalot Signup</h1>
+            <div class ='col-md-4 offset-md-4 p-4  rounded bg-light text-dark'>
+                <h1>Laugh-A-Lot Signup</h1>
                 <form class="pd-3">
                     <div class="form-group py-2">
                         <label for="exampleInputEmail1">Username</label>

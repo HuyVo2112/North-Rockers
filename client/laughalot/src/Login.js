@@ -8,11 +8,11 @@ function Login() {
       <link rel="stylesheet" href='Login.css'></link>
       <link rel="stylesheet" href='index.css'></link>
       <div className="Login">
-        <body class='colorClass pb-5'>
-        <div class="comtainer py-5"></div>
+        <body class='bg-dark pb-5'>
+        <div class="container py-5"></div>
         <div class="container h-100 align-middle opactiy-75 pb-5">
             <div class ='col-md-4 offset-md-4 p-4 opactiy-75 rounded bg-light text-dark'>
-                <h1>Laughalot Login</h1>
+                <h1>Laugh-A-Lot Login</h1>
                 <form class="pd-3">
                     <div class="form-group py-2">
                         <label for="exampleInputEmail1">Username</label>
