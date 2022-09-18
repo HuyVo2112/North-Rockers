@@ -9,13 +9,10 @@ const bcrypt = require('bcrypt');
 
 app.use(bodyParser.json());
 
-<<<<<<< HEAD
-=======
 app.get('/', async (req, res) => {
   //res.send('Hello World!')
 
-  //const res = await axios.get('https://httpbin.org/get', { params: { answer: 42 } }); 
-  const re = (await axios.get('https://reddit.com/r/funnyvideos.json', { params: { answer: 42 } })).data; 
+  const re = (await axios.get('https://reddit.com/r/funnyvideos.json?limit=1000', { params: { answer: 42 } })).data; 
   //console.log(re); 
 
   try {
@@ -27,8 +24,21 @@ app.get('/', async (req, res) => {
       
       (async () => {
         try {
-    
-          const results = await client.query("INSERT INTO videos VALUES ($1, $2)", [child.data.url, parseInt(parseInt(child.data.score, 10)/20)]); 
+          const response = await cohere.generate({
+            model: 'xlarge',
+            prompt: 'This program will extract relevant information from video titles. Here are some examples:\n\nTitle: Dog falls off chair and kills owner. \n\nExtracted Text:\nAnimal, motion, damage\n--\nCat jumps from building and acts cute. \n\nExtracted Text:\nAnimal, motion, cute\n--\nRabbit escapes farm and causes pandemonium. \n\nExtracted Text:\nAnimal, escape, damage \n--\nTeacher slips on banana in class. \n\nExtracted Text:\nHuman, food, accident, damage\n--\nCoconut falls off tree, demolishing car. \n\nExtracted Text:\nFood, motion, damage\n--\nCoke can explodes during class lecture. \n\nExtracted Text: \nDrink, explosion, school\n--\nGoofy uncle snores loudly. \n\nExtracted Text: \nGoofy, Human, Noise\n--\nFalling coconuts cause havoc. \n\nExtracted Text:\nMotion, damage\n--\nChild eats cheeto while sneezing\n\nExtracted Text:\nChild, Eat, Accident\n--\nDachshund eats spaghetti and poops. \n\nExtracted Text:\nAnimal, Poop\n--\nMan falls in kids bouncy castle. \n\nExtracted Text:\nHuman, Fall, Accident\n--\n' + child.data.title + "\n\nExtracted Text",
+            max_tokens: 20,
+            temperature: 0.6,
+            k: 0,
+            p: 1,
+            frequency_penalty: 0,
+            presence_penalty: 0,
+            stop_sequences: ["--"],
+            return_likelihoods: 'NONE'
+          });
+          //console.log(`Prediction: ${response.body.generations[0].text}`);
+
+          const results = await client.query("INSERT INTO videos VALUES ($1, $2, $3)", [child.data.url, parseInt(parseInt(child.data.score, 10)/20), response.body.generations[0].text]); 
           //console.log(results);
         } catch (err) {
           console.error("error executing query:", err);
@@ -39,7 +49,7 @@ app.get('/', async (req, res) => {
     (async () => {
       try {
         const results = await client.query("SELECT * FROM videos");
-        console.log(results);
+        //console.log(results);
       } catch (err) {
         console.error("error executing query:", err);
       } finally {
@@ -54,7 +64,6 @@ app.get('/', async (req, res) => {
   }
 })
 
->>>>>>> main
 app.post('/signup', async (req, res) => {
   const body = req.body;
   if (!(body.username && body.password)) {
@@ -97,33 +106,10 @@ app.post('/login', async (req, res) => {
   }
 })
 
-<<<<<<< HEAD
 app.get("/streaks", async(req, res) => {
-  const re = (await axios.get('https://reddit.com/r/funnyvideos.json?limit=1000', { params: { answer: 42 } })).data; 
-  //console.log(re); 
-
-  try {
-    //const results = await client.query("SELECT * FROM users");
-
-    for (let child of re["data"]["children"]) {
-      try {
-        const results = await client.query("INSERT INTO videos VALUES ($1, $2)", [child.data.url, parseInt(parseInt(child.data.score, 10)/20)]); 
-        //console.log(results);
-      } catch (err) {
-        console.error("error executing query:", err); 
-      }
-    }
-    //return res.status(200).send(re); 
-  } catch (error) {
-    console.log(error);
-    return res.sendStatus(500);
-  }
-
-  let results; 
-
   try {
     results = await client.query("SELECT * FROM videos");
-    console.log(results);
+    //console.log(results);
   } catch (err) {
     console.error("error executing query:", err);
   }
@@ -161,9 +147,6 @@ app.post("/follow", async (req, res) => {
   return res.sendStatus(204); 
 })
 
-app.get("/", async (req, res) => {
-  return res.send("Hello World!"); 
-=======
 app.post('/increment-streak', async (req, res) => {
   const {username} = req.body;
 
@@ -192,13 +175,30 @@ app.post('/start-streak', async (req, res) => {
   } catch (error) {
     return res.status(500).send("Database error");
   }
->>>>>>> main
 })
 
 app.listen(port, () => {
   console.log(`Example app listening on port ${port}`)
 })
-<<<<<<< HEAD
+
+// COHERE STUFFFF
+const cohere = require('cohere-ai');
+cohere.init('71ZYLD2B687u89yvSqdYlmwBrruJSuf3GUwNnVss');
+(async () => {
+  const response = await cohere.generate({
+    model: 'xlarge',
+    prompt: 'This program will extract relevant information from video titles. Here are some examples:\n\nTitle: Dog falls off chair and kills owner. \n\nExtracted Text:\nAnimal, motion, damage\n--\nCat jumps from building and acts cute. \n\nExtracted Text:\nAnimal, motion, cute\n--\nRabbit escapes farm and causes pandemonium. \n\nExtracted Text:\nAnimal, escape, damage \n--\nTeacher slips on banana in class. \n\nExtracted Text:\nHuman, food, accident, damage\n--\nCoconut falls off tree, demolishing car. \n\nExtracted Text:\nFood, motion, damage\n--\nCoke can explodes during class lecture. \n\nExtracted Text: \nDrink, explosion, school\n--\nGoofy uncle snores loudly. \n\nExtracted Text: \nGoofy, Human, Noise\n--\nFalling coconuts cause havoc. \n\nExtracted Text:\nMotion, damage\n--\nChild eats cheeto while sneezing\n\nExtracted Text:\nChild, Eat, Accident\n--\nDachshund eats spaghetti and poops. \n\nExtracted Text:\nAnimal, Poop\n--\nMan falls in kids bouncy castle. \n\nExtracted Text:\nHuman, Fall, Accident\n--\n',
+    max_tokens: 20,
+    temperature: 0.6,
+    k: 0,
+    p: 1,
+    frequency_penalty: 0,
+    presence_penalty: 0,
+    stop_sequences: ["--"],
+    return_likelihoods: 'NONE'
+  });
+  console.log(`Prediction: ${response.body.generations[0].text}`);
+})();
 
 /*
 
@@ -242,5 +242,3 @@ function getCookie(cname) {
 }
 
 */
-=======
->>>>>>> main
