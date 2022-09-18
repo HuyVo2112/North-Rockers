@@ -5,11 +5,11 @@ import {Navigate} from "react-router-dom";
 
 function Home() {
 
-  let isLoggedIn = false;
+  // let isLoggedIn = false;
 
-  if (!isLoggedIn) {
-    return <Navigate to='/login'></Navigate>
-  }
+  // if (!isLoggedIn) {
+  //   return <Navigate to='/login'></Navigate>
+  // }
   return (
     <html>
       <link rel="stylesheet" href='Home.css'></link>
