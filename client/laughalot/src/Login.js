@@ -1,8 +1,28 @@
 import logo from './logo.svg';
 import './Login.css';
 import './index.css';
-import {Link} from "react-router-dom"
+import {Link, useNavigate} from "react-router-dom";
+import axios from 'axios';
+
 function Login() {
+  const navigate = useNavigate();
+  const loginUser = async (e) => {
+    e.preventDefault();
+    const passwordField = document.getElementById("exampleInputPassword1");
+    const usernameField = document.getElementById("exampleInputEmail1");
+    
+    try {
+      const result = await axios.post('http://localhost:3000/login', {
+        username: usernameField.value,
+        password: passwordField.value
+      });
+      if (result.data === true) {
+        navigate('/');
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <html>
       <link rel="stylesheet" href='Login.css'></link>
@@ -24,7 +44,7 @@ function Login() {
                         <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password"/>
                     </div>
    
-                    <button type="submit" class="btn my-2 btn-lg btn-block btn-primary">Submit</button>
+                    <button onClick={loginUser} type="submit" class="btn my-2 btn-lg btn-block btn-primary">Submit</button>
                     </form>
                     {/* If User is signed in successfully then send them to the homepage */}
                     <Link to ="/signup">Sign Up Here</Link>

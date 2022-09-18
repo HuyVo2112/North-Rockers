@@ -1,8 +1,26 @@
 import logo from './logo.svg';
 import './Signup.css';
 import './index.css';
+import axios from 'axios';
+import { useNavigate } from 'react-router-dom';
 
 function Signup() {
+  const navigate = useNavigate();
+  const signupNewuser = async (e) => {
+    e.preventDefault();
+    const passwordField = document.getElementById("exampleInputPassword1");
+    const usernameField = document.getElementById("exampleInputEmail1");
+    
+    try {
+      await axios.post('http://localhost:3000/signup', {
+        username: usernameField.value,
+        password: passwordField.value
+      });
+      navigate('/');
+    } catch (error) {
+      console.log(error);
+    }
+  }
   return (
     <html>
       <link rel="stylesheet" href='Signup.css'></link>
@@ -24,7 +42,7 @@ function Signup() {
                         <input type="password" class="form-control" id="exampleInputPassword1" placeholder="Password"/>
                     </div>
    
-                    <button type="submit" class="btn my-2 btn-lg btn-block btn-primary">Submit</button>
+                    <button onClick={signupNewuser} type="submit" class="btn my-2 btn-lg btn-block btn-primary">Submit</button>
                     </form>
                  
             </div>

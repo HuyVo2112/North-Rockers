@@ -1,14 +1,36 @@
 import logo from './logo.svg';
 import './Home.css';
 import './index.css';
-import {Navigate} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
+import axios from 'axios';
 
 function Home() {
 
-  let isLoggedIn = true;
+  // let isLoggedIn = true;
 
-  if (!isLoggedIn) {
-    return <Navigate to='/login'></Navigate>
+  // if (!isLoggedIn) {
+  //   return <Navigate to='/login'></Navigate>
+  // }
+  const navigate = useNavigate();
+  const searchName = async (e) => {
+    e.preventDefault();
+    const username = document.getElementById("paddingBottomInput").value;
+    try {
+      const users = await axios.get('http://localhost:3000/user?username='+username);
+      console.log(users);
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  const startChallenge = async (e) => {
+    e.preventDefault();
+    try {
+      // 
+      navigate('/videos');
+    } catch (error) {
+      console.log(error);
+    }
   }
   return (
     <html>
@@ -42,17 +64,15 @@ function Home() {
         </header>
         <body class='bg-dark text-white'>
                 <div class = "container">
-                    
-               
-                <div class="row flex-lg-row-reverse align-items-center g-5 py-5">
-                <div class="col-10 col-sm-8 col-lg-6">
-                  <img src="http://localhost:3000/donald.png" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy"/>
+                <div class ="row flex-lg-row-reverse align-items-center g-5 py-5">
+                <div class ="col-10 col-sm-8 col-lg-6">
+                  <img src ="http://localhost:3001/donald.png" class="d-block mx-lg-auto img-fluid" alt="Bootstrap Themes" width="700" height="500" loading="lazy"/>
                 </div>
                 <div class="col-lg-6">
                   <h1 class="display-5 fw-bold lh-1 mb-3">We want to get better at making you laugh</h1>
                   <p class="lead">When is a person visibly at their happiest? The answer is simple, it is when they laugh. Our service aims to wipe away the emotionless faces of humanity today. We want to make a world where everyone can be happy through the use of AI and technology. Start laughing now to train our AI and aid us in building a happier world.</p>
                   <div class="d-grid gap-2 pl-1 d-md-flex justify-content-md-center">
-                    <button type="button" class="btn btn-primary btn-lg px-4 me-md-2">New Streak</button>
+                    <button onClick={startChallenge} type="button" class="btn btn-primary btn-lg px-4 me-md-2">New Streak</button>
                    
                   </div>
                 </div>
@@ -67,34 +87,35 @@ function Home() {
                 <tr>
                   <th scope="col">#</th>
                   <th scope="col">Name</th>
-            
+                  <th scope="col">Score</th>
                 </tr>
               </thead>
               <tbody>
                 <tr>
                   <th scope="row">1</th>
                   <td>Mark Otto</td>
-                  
+                  <td>10</td>
                 </tr>
                 <tr>
                 <th scope="row">2</th>
                   <td>Larry Bird</td>
-               
+                  <td>9</td>
                 </tr>
                 <tr>
                   <th scope="row">3</th>
                   <td>Larry</td>
+                  <td>8</td>
                 </tr>
               </tbody>
             </table>
-               
+                
   
             <div class="col-md-6 offset-md-3 py-5">
             <h2 class='pd-3'>ADD FRIEND</h2>
               
               <div class="input-group">
-                <input type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
-                <button type="button" class="btn btn-outline-success">Search</button>
+                <input id="paddingBottomInput" type="search" class="form-control rounded" placeholder="Search" aria-label="Search" aria-describedby="search-addon" />
+                <button onClick={searchName} type="button" class="btn btn-outline-success">Search</button>
               </div>
               </div>
             </div>

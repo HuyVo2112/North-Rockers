@@ -1,4 +1,3 @@
-
 CREATE TABLE IF NOT EXISTS users (
     username VARCHAR(250) UNIQUE NOT NULL,
     password VARCHAR(250) NOT NULL,
