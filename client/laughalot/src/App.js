@@ -2,7 +2,7 @@ import ReactDOM from "react-dom/client";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 import Login from "./Login";
-import Home from "./Home";
+import Home from "./Home";  
 import Signup from "./Signup";
 import Videos from "./Videos";
 

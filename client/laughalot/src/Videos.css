@@ -1,9 +1,9 @@
 .app { 
     display: flex; 
-
     flex-direction: column; 
     align-items: center; 
     justify-content: space-between;
+    color: white;
 }
 
 .app__video {
@@ -20,4 +20,28 @@
     height: 200px;
     position: absolute;
     left: -1000px;
+}
+
+#video-frame {
+    width: 1000px;
+    height: 800px;
+}
+
+#next-button {
+    position: fixed;
+    top: 300px;
+    right: 20px;
+
+}
+
+#score-on-the-side {
+    position: fixed;
+    top: 400px;
+    right: 20px;
+}
+
+#challenge-result {
+    position: fixed;
+    top: 200px;
+    left: 20px;
 }

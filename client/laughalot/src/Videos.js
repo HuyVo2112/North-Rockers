@@ -2,8 +2,10 @@ import { useRef, useEffect, useState } from 'react';
 import './Videos.css';
 import * as faceapi from "face-api.js";
 import axios from 'axios';
+import {useNavigate} from "react-router-dom";
 
 function Videos() {
+    const navigate = useNavigate();
   const videoRef = useRef();
   const canvasRef = useRef();
   const [videos, setVideos] = useState([]);
@@ -68,24 +70,53 @@ function Videos() {
         console.log(resized[0].expressions.happy)
         if(resized[0].expressions.happy > 0.6) {
             setLaugh(true);
+            setTimeout(() => {
+                navigate('/');
+            }, 2000)
         }
       }
-      
-
     }, 1000)
   }
 
   return (
+    <>
+    <header>
+          {/* <link rel="preconnect" href="https://fonts.googleapis.com"> 
+          <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+          <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet"> */}
+            <nav class="navbar navbar-expand-lg navbar-dark p-4 bg-primary">
+            <a class="navbar-brand pl-3" href="#"><h3>Laugh-A-Lot</h3></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarText">
+              <ul class="navbar-nav mr-auto">
+                {/* <li class="nav-item active">
+                  <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
+                </li> */}
+                <li class="nav-item">
+                  <a class="nav-link text-light" href="#">About</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-light" href="">Logout</a>
+                </li>
+              </ul>
+            
+            </div>
+          </nav>
+        </header>
     <div  className="app">
         
       <canvas ref={canvasRef} width="940" height="650" className='app__canvas' />
       <div className='app__video'>
         <video id="camera" crossOrigin='anonymous' ref={videoRef} autoPlay ></video>
       </div>
-      {videos.length > 0 ? <iframe width="560" height="315" src={videos[videoIndex].video_id} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe> : <h1>Videos not ready. Please wait</h1>}
-      <button onClick={nextVideo}>Next</button>
-      {laugh ? <h1>You Laughed :D</h1> : null}
+      {videos.length > 0 ? <iframe id="video-frame" src={videos[videoIndex].video_id} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe> : <h1>Videos not ready. Please wait</h1>}
+      <button id="next-button" class ='btn btn-primary'onClick={nextVideo}>Next</button>
+      <div id="score-on-the-side">Score: {videoIndex}</div>
+      {laugh ? <h1 id="challenge-result">You Laughed :D. Your score is {videoIndex}</h1> : null}
     </div>
+    </>
   );
 }
 
