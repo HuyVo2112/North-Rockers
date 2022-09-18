@@ -2,7 +2,7 @@ import { useRef, useEffect, useState } from 'react';
 import './Videos.css';
 import * as faceapi from "face-api.js";
 import axios from 'axios';
-import {useNavigate} from "react-router-dom";
+import {useNavigate, Link} from "react-router-dom";
 
 function Videos() {
     const navigate = useNavigate();
@@ -85,7 +85,7 @@ function Videos() {
           <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
           <link href="https://fonts.googleapis.com/css2?family=Acme&display=swap" rel="stylesheet"> */}
             <nav class="navbar navbar-expand-lg navbar-dark p-4 bg-primary">
-            <a class="navbar-brand pl-3" href="#"><h3>Laugh-A-Lot</h3></a>
+            <Link class="navbar-brand pl-3" to="/"><h3>Laugh-A-Lot</h3></Link>
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
               <span class="navbar-toggler-icon"></span>
             </button>
@@ -94,9 +94,6 @@ function Videos() {
                 {/* <li class="nav-item active">
                   <a class="nav-link" href="#">Home <span class="sr-only">(current)</span></a>
                 </li> */}
-                <li class="nav-item">
-                  <a class="nav-link text-light" href="#">About</a>
-                </li>
                 <li class="nav-item">
                   <a class="nav-link text-light" href="">Logout</a>
                 </li>
@@ -111,10 +108,11 @@ function Videos() {
       <div className='app__video'>
         <video id="camera" crossOrigin='anonymous' ref={videoRef} autoPlay ></video>
       </div>
+      {laugh ? <h1 id="challenge-result">You Lost. Your score is {videoIndex}</h1> : null}
       {videos.length > 0 ? <iframe id="video-frame" src={videos[videoIndex].video_id} frameBorder="0" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe> : <h1>Videos not ready. Please wait</h1>}
       <button id="next-button" class ='btn btn-primary'onClick={nextVideo}>Next</button>
       <div id="score-on-the-side">Score: {videoIndex}</div>
-      {laugh ? <h1 id="challenge-result">You Laughed :D. Your score is {videoIndex}</h1> : null}
+      
     </div>
     </>
   );
